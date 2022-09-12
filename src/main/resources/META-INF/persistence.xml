@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence
+        version="2.0"
+        xmlns="http://java.sun.com/xml/ns/persistence"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+    <persistence-unit name="TestUnit" transaction-type="RESOURCE_LOCAL">
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+
+        <!-- Entities -->
+        <class>com.github.mustard.Employee</class>
+        <class>com.github.mustard.Job</class>
+
+        <!-- Results -->
+<!--        <class>com.subtrux.soms.server.db.entity.results.PunctualityChartResult</class>-->
+<!--        <class>com.subtrux.soms.server.db.entity.results.DriverWorkloadVsTimeSheetChartResult</class>-->
+<!--        <class>com.subtrux.soms.server.db.entity.results.TenantInsurancePoliciesResult</class>-->
+
+        <!-- Converters -->
+<!--        <class>com.subtrux.soms.server.db.entity.converter.LocalDateConverter</class>-->
+<!--        <class>com.subtrux.soms.server.db.entity.converter.OffsetDateTimeConverter</class>-->
+<!--        <class>com.subtrux.soms.server.db.entity.converter.CommunicationChannelSetConverter</class>-->
+
+        <!-- Dont try and scan for entity classes (this can take 10 - 20 seconds in an uber jar so we list them all -->
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+        <shared-cache-mode>NONE</shared-cache-mode>
+        <properties>
+<!--            <property name="eclipselink.logging.logger" value="JavaLogger" />-->
+            <property name="eclipselink.logging.level" value="SEVERE"/>
+
+<!--            <property name="eclipselink.profiler" value="com.subtrux.soms.server.db.SomsSessionProfiler"/>-->
+<!--            <property name="eclipselink.profiler" value="PerformanceProfiler"/>-->
+
+            <property name="eclipselink.target-database" value="org.eclipse.persistence.platform.database.H2Platform"/>
+            <property name="javax.persistence.schema-generation.database.action" value="none"/>
+
+            <!-- Eclipse link throwing ValidationException - Null or zero primary key encountered in UnitOfWork clone
+             [com.subtrux.soms.server.db.entity.UserSession@676c14ba], primary key [0]. Set descriptor's IdValidation
+             or the "eclipselink.id-validation" property.  This property added to see if it fixes the problem -->
+            <property name="eclipselink.allow-zero-id" value="true"/>
+
+            <!-- By default flush mode is set to AUTO which means that entity manager flushes before executing a query.
+                 This is problematic if you need to query the db during a record update.  By setting the flush mode to
+                 to COMMIT the entity manager will only flush when the transaction is complete. -->
+            <property name="eclipselink.persistence-context.flush-mode" value="COMMIT"/>
+
+            <!-- Use prepared statements and cache them -->
+            <property name="eclipselink.jdbc.bind-parameters" value="true"/>
+            <property name="eclipselink.jdbc.cache-statements" value="true"/>
+            <property name="eclipselink.jdbc.cache-statements.size" value="500"/>
+
+            <!-- Enable batch writing -->
+            <!-- See: http://java-persistence-performance.blogspot.com.au/2013/05/batch-writing-and-dynamic-vs.html -->
+            <property name="eclipselink.jdbc.batch-writing" value="JDBC"/>
+            <property name="eclipselink.jdbc.batch-writing.size" value="20"/>
+            <property name="javax.persistence.jdbc.rewriteBatchedStatements" value="true"/>
+        </properties>
+    </persistence-unit>
+</persistence>
